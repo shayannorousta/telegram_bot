@@ -54,15 +54,12 @@ class TelegramBot:
         @self.bot.message_handler(func=lambda message: True)
         def handle_menu(message):
             if message.chat.type in ['group', 'supergroup']:
-                # Ensure the bot is mentioned in group chats
                 bot_username = f'@{self.bot.get_me().username}'
                 if message.text.startswith(bot_username):
-                    # Strip the bot username mention and any leading/trailing whitespace
                     text = message.text[len(bot_username):].strip()
                 else:
                     return
             else:
-                # For non-group chats, use the message text as is
                 text = message.text
 
             options = self.strings['options']
