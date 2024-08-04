@@ -1,0 +1,22 @@
+{
+    "welcome_message": "خوش آمدید! لطفاً یک گزینه را انتخاب کنید:",
+    "options": {
+      "mali": "مالی",
+      "human_resources": "منابع انسانی",
+      "legal": "حقوقی",
+      "franchise_development": "توسعه فرانچایز",
+      "ict": "ICT",
+      "inspection": "نظارت و بازرسی",
+      "commerce": "بازرگانی",
+      "marketing": "بازاریابی",
+      "organizational_sales": "فروش سازمانی و اینترنتی",
+      "warehouse_distribution": "انبارها و توزیع",
+      "launch": "راه اندازی",
+      "equipment": "تجهیز",
+      "supply_chain_planning": "برنامه ریزی زنجیره تامین",
+      "back": "بازگشت"
+    },
+    "selection_message": "شما گزینه {option} را انتخاب کردید",
+    "invalid_option": "لطفاً یک گزینه معتبر را انتخاب کنید",
+    "back_message": "بازگشت به منوی اصلی"
+  }
