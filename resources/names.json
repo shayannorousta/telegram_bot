@@ -1,4 +1,5 @@
 {
+    "submenu_prompt": "You have selected {option}. Please choose a sub-option.",
     "welcome_message": "خوش آمدید! لطفاً یک گزینه را انتخاب کنید:",
     "options": {
       "mali": "مالی",
@@ -18,5 +19,13 @@
     },
     "selection_message": "شما گزینه {option} را انتخاب کردید",
     "invalid_option": "لطفاً یک گزینه معتبر را انتخاب کنید",
-    "back_message": "بازگشت به منوی اصلی"
+    "back_message": "بازگشت به منوی اصلی",
+    "call_bot": "ربات",
+    "submenus": {
+      "mali": {
+        "sub_option_1": "Sub Option 1",
+        "sub_option_2": "Sub Option 2",
+        "sub_option_3": "Sub Option 3"
+      }
+    }
   }

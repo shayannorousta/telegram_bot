@@ -15,33 +15,39 @@ class TelegramBot:
             self.strings = json.load(f)
         self.setup_handlers()
     
-    def main_menu_keyboard(self):
+    def main_menu_keyboard(self, submenu=None):
         markup = ReplyKeyboardMarkup(resize_keyboard=True)
-        options = self.strings['options']
-        markup.row(
-            KeyboardButton(options['mali']),
-            KeyboardButton(options['human_resources']),
-            KeyboardButton(options['legal'])
-        )
-        markup.row(
-            KeyboardButton(options['franchise_development']),
-            KeyboardButton(options['ict']),
-            KeyboardButton(options['inspection'])
-        )
-        markup.row(
-            KeyboardButton(options['commerce']),
-            KeyboardButton(options['marketing']),
-            KeyboardButton(options['organizational_sales'])
-        )
-        markup.row(
-            KeyboardButton(options['warehouse_distribution']),
-            KeyboardButton(options['launch']),
-            KeyboardButton(options['equipment'])
-        )
-        markup.row(
-            KeyboardButton(options['back']),
-            KeyboardButton(options['supply_chain_planning'])
-        )
+        if submenu:
+            options = self.strings['submenus'][submenu]
+            for option in options:
+                markup.add(KeyboardButton(option))
+            markup.add(KeyboardButton(self.strings['options']['back']))
+        else:
+            options = self.strings['options']
+            markup.row(
+                KeyboardButton(options['mali']),
+                KeyboardButton(options['human_resources']),
+                KeyboardButton(options['legal'])
+            )
+            markup.row(
+                KeyboardButton(options['franchise_development']),
+                KeyboardButton(options['ict']),
+                KeyboardButton(options['inspection'])
+            )
+            markup.row(
+                KeyboardButton(options['commerce']),
+                KeyboardButton(options['marketing']),
+                KeyboardButton(options['organizational_sales'])
+            )
+            markup.row(
+                KeyboardButton(options['warehouse_distribution']),
+                KeyboardButton(options['launch']),
+                KeyboardButton(options['equipment'])
+            )
+            markup.row(
+                KeyboardButton(options['back']),
+                KeyboardButton(options['supply_chain_planning'])
+            )
         return markup
     
     def setup_handlers(self):
@@ -54,24 +60,26 @@ class TelegramBot:
         @self.bot.message_handler(func=lambda message: True)
         def handle_menu(message):
             if message.chat.type in ['group', 'supergroup']:
-                bot_username = f'@{self.bot.get_me().username}'
-                if message.text.startswith(bot_username):
-                    text = message.text[len(bot_username):].strip()
-                else:
-                    if message.text in [i for i in self.strings['options'].values()]:
-                        text = message.text
-                        command_func = self.get_command_function(text)
-                    if command_func:
-                        command_func(message)
-                    else:
-                        self.bot.send_message(message.chat.id, 
-                                            self.strings['invalid_option'], 
-                                            reply_markup=self.main_menu_keyboard())
+                if message.text == self.strings['call_bot']:
+                    self.bot.send_message(message.chat.id, 
+                                        self.strings['welcome_message'],
+                                        reply_markup=self.main_menu_keyboard())
+  
+            text = message.text
+
+            command_func = self.get_command_function(text)
+            if command_func:
+                command_func(message)
+            else:
+                pass
 
     def get_command_function(self, text):
         options = self.strings['options']
+        submenus = self.strings['submenus']
+        
+        # Main menu options
         commands = {
-            options['mali']: self.mali,
+            options['mali']: self.show_mali_submenu,
             options['human_resources']: self.human_resources,
             options['legal']: self.legal,
             options['franchise_development']: self.franchise_development,
@@ -86,11 +94,43 @@ class TelegramBot:
             options['supply_chain_planning']: self.supply_chain_planning,
             options['back']: self.go_back
         }
-        return commands.get(text)
+        
+        if text in options.values():
+            return commands.get(text)
+        
+        # Submenu options
+        for submenu_key, submenu_options in submenus.items():
+            if text in submenu_options.values():
+                return getattr(self, f'{submenu_key}_{text.lower().replace(" ", "_")}', None)
+        
+        return None
     
-    def mali(self, message):
-        self.send_selection_message(message, 'mali')
-
+    def show_mali_submenu(self, message):
+        self.bot.send_message(message.chat.id, 
+                              self.strings['submenu_prompt'].format(option=self.strings['options']['mali']),
+                              reply_markup=self.main_menu_keyboard(submenu='mali'))
+    
+    def handle_submenu_selection(self, message):
+        subcommands = self.strings['submenus']['mali']
+        selected_option = message.text
+        self.bot.send_message(message.chat.id, 
+                              self.strings['selection_message'].format(option=selected_option))
+        
+        command_func = getattr(self, f'mali_{selected_option.lower().replace(" ", "_")}', None)
+        if command_func:
+            command_func(message)
+        else:
+            self.bot.send_message(message.chat.id, self.strings['error_message'])
+    
+    def mali_sub_option_1(self, message):
+        self.bot.send_message(message.chat.id, "You selected Sub Option 1 in Mali submenu.")
+    
+    def mali_sub_option_2(self, message):
+        self.bot.send_message(message.chat.id, "You selected Sub Option 2 in Mali submenu.")
+    
+    def mali_sub_option_3(self, message):
+        self.bot.send_message(message.chat.id, "You selected Sub Option 3 in Mali submenu.")
+    
     def human_resources(self, message):
         self.send_selection_message(message, 'human_resources')
 
