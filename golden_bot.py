@@ -58,18 +58,15 @@ class TelegramBot:
                 if message.text.startswith(bot_username):
                     text = message.text[len(bot_username):].strip()
                 else:
-                    return
-            else:
-                text = message.text
-
-            options = self.strings['options']
-            command_func = self.get_command_function(text)
-            if command_func:
-                command_func(message)
-            else:
-                self.bot.send_message(message.chat.id, 
-                                      self.strings['invalid_option'], 
-                                      reply_markup=self.main_menu_keyboard())
+                    if message.text in [i for i in self.strings['options'].values()]:
+                        text = message.text
+                        command_func = self.get_command_function(text)
+                    if command_func:
+                        command_func(message)
+                    else:
+                        self.bot.send_message(message.chat.id, 
+                                            self.strings['invalid_option'], 
+                                            reply_markup=self.main_menu_keyboard())
 
     def get_command_function(self, text):
         options = self.strings['options']
