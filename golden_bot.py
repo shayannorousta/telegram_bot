@@ -19,7 +19,7 @@ class TelegramBot:
         markup = ReplyKeyboardMarkup(resize_keyboard=True)
         if submenu:
             options = self.strings['submenus'][submenu]
-            for option in options:
+            for option in options.values():
                 markup.add(KeyboardButton(option))
             markup.add(KeyboardButton(self.strings['options']['back']))
         else:
@@ -101,26 +101,20 @@ class TelegramBot:
         # Submenu options
         for submenu_key, submenu_options in submenus.items():
             if text in submenu_options.values():
-                return getattr(self, f'{submenu_key}_{text.lower().replace(" ", "_")}', None)
+                return getattr(self, f'{submenu_key}_{self.get_key_from_value(submenu_options, text)}', None)
         
+        return None
+
+    def get_key_from_value(self, dictionary, value):
+        for k, v in dictionary.items():
+            if v == value:
+                return k
         return None
     
     def show_mali_submenu(self, message):
         self.bot.send_message(message.chat.id, 
-                              self.strings['submenu_prompt'].format(option=self.strings['options']['mali']),
+                              self.strings['options']['mali'],
                               reply_markup=self.main_menu_keyboard(submenu='mali'))
-    
-    def handle_submenu_selection(self, message):
-        subcommands = self.strings['submenus']['mali']
-        selected_option = message.text
-        self.bot.send_message(message.chat.id, 
-                              self.strings['selection_message'].format(option=selected_option))
-        
-        command_func = getattr(self, f'mali_{selected_option.lower().replace(" ", "_")}', None)
-        if command_func:
-            command_func(message)
-        else:
-            self.bot.send_message(message.chat.id, self.strings['error_message'])
     
     def mali_sub_option_1(self, message):
         self.bot.send_message(message.chat.id, "You selected Sub Option 1 in Mali submenu.")
