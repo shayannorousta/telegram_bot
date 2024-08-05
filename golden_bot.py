@@ -117,7 +117,8 @@ class TelegramBot:
                               reply_markup=self.main_menu_keyboard(submenu='mali'))
     
     def mali_sub_option_1(self, message):
-        self.bot.send_message(message.chat.id, "You selected Sub Option 1 in Mali submenu.")
+        with open('HR-WI-24-00.signed.PDF', 'rb') as pdf_file:
+            self.bot.send_document(message.chat.id, pdf_file)
     
     def mali_sub_option_2(self, message):
         self.bot.send_message(message.chat.id, "You selected Sub Option 2 in Mali submenu.")
